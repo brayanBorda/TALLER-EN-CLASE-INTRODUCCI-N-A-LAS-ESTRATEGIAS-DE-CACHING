@@ -1,0 +1,1 @@
+// manejamos el localStorage aquí

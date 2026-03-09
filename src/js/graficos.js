@@ -1,0 +1,1 @@
+// generación de los gráficos 
