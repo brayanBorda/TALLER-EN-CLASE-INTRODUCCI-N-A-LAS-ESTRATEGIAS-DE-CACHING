@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#6366f1" />
+  <meta name="description" content="Controla tus gastos diarios, categorías y presupuestos mensuales." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="GastoSmart" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <title>GastoSmart</title>
+</head>
+<body>
+
+  <!-- ===== OFFLINE BANNER ===== -->
+  <div id="offline-banner" class="offline-banner hidden">
+    <span>&#9889; Sin conexión — modo offline activo</span>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="app-header">
+    <div class="header-left">
+      <span class="logo-icon">💸</span>
+      <h1 class="app-title">GastoSmart</h1>
+    </div>
+    <div class="header-right">
+      <span class="header-month" id="current-month-label">Marzo 2026</span>
+      <button class="btn-icon" id="btn-install" title="Instalar app" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 19h14"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-view="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+      <span>Inicio</span>
+    </button>
+    <button class="nav-item" data-view="gastos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      <span>Gastos</span>
+    </button>
+    <button class="nav-item" data-view="presupuesto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+      </svg>
+      <span>Presupuesto</span>
+    </button>
+    <button class="nav-item" data-view="graficos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span>Gráficos</span>
+    </button>
+  </nav>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+
+    <!-- ── VIEW: DASHBOARD ── -->
+    <section id="view-dashboard" class="view active">
+
+      <div class="summary-cards">
+        <div class="card card-income">
+          <p class="card-label">Ingresos</p>
+          <p class="card-amount" id="total-income">$0</p>
+        </div>
+        <div class="card card-expense">
+          <p class="card-label">Gastos</p>
+          <p class="card-amount" id="total-expense">$0</p>
+        </div>
+        <div class="card card-balance">
+          <p class="card-label">Balance</p>
+          <p class="card-amount" id="total-balance">$0</p>
+        </div>
+      </div>
+
+      <div class="budget-overview card">
+        <div class="budget-overview-header">
+          <span>Presupuesto mensual utilizado</span>
+          <span id="budget-percent-label">0%</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="global-budget-bar" style="width:0%"></div>
+        </div>
+        <p class="budget-overview-detail" id="budget-overview-detail">$0 de $0</p>
+      </div>
+
+      <div class="section-header">
+        <h2>Últimos gastos</h2>
+        <button class="btn-text" data-view="gastos">Ver todos</button>
+      </div>
+      <ul class="expense-list" id="recent-expense-list">
+        <li class="empty-state">Aún no hay gastos registrados</li>
+      </ul>
+
+    </section>
+
+    <!-- ── VIEW: GASTOS ── -->
+    <section id="view-gastos" class="view">
+
+      <div class="section-header">
+        <h2>Mis Gastos</h2>
+        <button class="btn-primary btn-sm" id="btn-open-modal">+ Agregar</button>
+      </div>
+
+      <div class="filter-chips" id="filter-chips">
+        <button class="chip active" data-filter="all">Todos</button>
+        <button class="chip" data-filter="comida">🍔 Comida</button>
+        <button class="chip" data-filter="transporte">🚌 Transporte</button>
+        <button class="chip" data-filter="ocio">🎮 Ocio</button>
+        <button class="chip" data-filter="salud">💊 Salud</button>
+        <button class="chip" data-filter="educacion">📚 Educación</button>
+        <button class="chip" data-filter="hogar">🏠 Hogar</button>
+        <button class="chip" data-filter="otros">📦 Otros</button>
+      </div>
+
+      <ul class="expense-list" id="full-expense-list">
+        <li class="empty-state">Aún no hay gastos registrados</li>
+      </ul>
+
+    </section>
+
+    <!-- ── VIEW: PRESUPUESTO ── -->
+    <section id="view-presupuesto" class="view">
+
+      <h2 class="section-title">Presupuesto Mensual</h2>
+
+      <div class="card form-card">
+        <label class="form-label">Ingreso mensual estimado</label>
+        <div class="input-group">
+          <span class="input-prefix">$</span>
+          <input type="number" id="monthly-income" class="form-input" placeholder="0.00" min="0" />
+        </div>
+        <button class="btn-primary mt-sm" id="btn-save-income">Guardar ingreso</button>
+      </div>
+
+      <h3 class="sub-title">Límite por categoría</h3>
+      <div class="budget-categories" id="budget-categories">
+
+        <div class="budget-cat-item card" data-cat="comida">
+          <div class="budget-cat-header">
+            <span>🍔 Comida</span>
+            <span class="budget-cat-spent" id="spent-comida">Gastado: $0</span>
+          </div>
+          <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input type="number" class="form-input budget-input" data-cat="comida" placeholder="Límite" min="0" />
+          </div>
+          <div class="progress-bar-track mt-xs">
+            <div class="progress-bar-fill" id="bar-comida" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="budget-cat-item card" data-cat="transporte">
+          <div class="budget-cat-header">
+            <span>🚌 Transporte</span>
+            <span class="budget-cat-spent" id="spent-transporte">Gastado: $0</span>
+          </div>
+          <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input type="number" class="form-input budget-input" data-cat="transporte" placeholder="Límite" min="0" />
+          </div>
+          <div class="progress-bar-track mt-xs">
+            <div class="progress-bar-fill" id="bar-transporte" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="budget-cat-item card" data-cat="ocio">
+          <div class="budget-cat-header">
+            <span>🎮 Ocio</span>
+            <span class="budget-cat-spent" id="spent-ocio">Gastado: $0</span>
+          </div>
+          <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input type="number" class="form-input budget-input" data-cat="ocio" placeholder="Límite" min="0" />
+          </div>
+          <div class="progress-bar-track mt-xs">
+            <div class="progress-bar-fill" id="bar-ocio" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="budget-cat-item card" data-cat="salud">
+          <div class="budget-cat-header">
+            <span>💊 Salud</span>
+            <span class="budget-cat-spent" id="spent-salud">Gastado: $0</span>
+          </div>
+          <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input type="number" class="form-input budget-input" data-cat="salud" placeholder="Límite" min="0" />
+          </div>
+          <div class="progress-bar-track mt-xs">
+            <div class="progress-bar-fill" id="bar-salud" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="budget-cat-item card" data-cat="educacion">
+          <div class="budget-cat-header">
+            <span>📚 Educación</span>
+            <span class="budget-cat-spent" id="spent-educacion">Gastado: $0</span>
+          </div>
+          <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input type="number" class="form-input budget-input" data-cat="educacion" placeholder="Límite" min="0" />
+          </div>
+          <div class="progress-bar-track mt-xs">
+            <div class="progress-bar-fill" id="bar-educacion" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="budget-cat-item card" data-cat="hogar">
+          <div class="budget-cat-header">
+            <span>🏠 Hogar</span>
+            <span class="budget-cat-spent" id="spent-hogar">Gastado: $0</span>
+          </div>
+          <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input type="number" class="form-input budget-input" data-cat="hogar" placeholder="Límite" min="0" />
+          </div>
+          <div class="progress-bar-track mt-xs">
+            <div class="progress-bar-fill" id="bar-hogar" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="budget-cat-item card" data-cat="otros">
+          <div class="budget-cat-header">
+            <span>📦 Otros</span>
+            <span class="budget-cat-spent" id="spent-otros">Gastado: $0</span>
+          </div>
+          <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input type="number" class="form-input budget-input" data-cat="otros" placeholder="Límite" min="0" />
+          </div>
+          <div class="progress-bar-track mt-xs">
+            <div class="progress-bar-fill" id="bar-otros" style="width:0%"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="btn-primary btn-full mt-md" id="btn-save-budgets">Guardar presupuestos</button>
+
+    </section>
+
+    <!-- ── VIEW: GRÁFICOS ── -->
+    <section id="view-graficos" class="view">
+      <h2 class="section-title">Resumen &amp; Gráficos</h2>
+
+      <div class="tabs" id="chart-tabs">
+        <button class="tab active" data-tab="bar">Presupuesto vs Real</button>
+        <button class="tab" data-tab="pie">Por categoría</button>
+        <button class="tab" data-tab="monthly">Resumen mensual</button>
+      </div>
+
+      <div class="chart-panel active" id="tab-bar">
+        <div class="chart-wrapper">
+          <canvas id="chart-bar"></canvas>
+        </div>
+        <p class="chart-caption">Comparación entre el presupuesto asignado y el gasto real por categoría.</p>
+      </div>
+
+      <div class="chart-panel" id="tab-pie">
+        <div class="chart-wrapper">
+          <canvas id="chart-pie"></canvas>
+        </div>
+        <p class="chart-caption">Distribución porcentual del gasto total por categoría.</p>
+      </div>
+
+      <div class="chart-panel" id="tab-monthly">
+        <div class="monthly-summary card">
+          <h3>Resumen de Marzo 2026</h3>
+          <ul class="summary-list" id="monthly-summary-list">
+            <li class="empty-state">Sin datos para este mes</li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ===== MODAL: AGREGAR GASTO ===== -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 id="modal-title">Registrar Gasto</h2>
+        <button class="btn-icon" id="btn-close-modal" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <form id="expense-form" class="expense-form" novalidate>
+
+        <div class="form-group">
+          <label class="form-label" for="exp-description">Descripción *</label>
+          <input type="text" id="exp-description" class="form-input"
+                 placeholder="Ej. Almuerzo en restaurante" maxlength="80" required />
+          <span class="field-error" id="err-description"></span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="exp-amount">Monto *</label>
+            <div class="input-group">
+              <span class="input-prefix">$</span>
+              <input type="number" id="exp-amount" class="form-input"
+                     placeholder="0.00" min="0.01" step="0.01" required />
+            </div>
+            <span class="field-error" id="err-amount"></span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="exp-date">Fecha *</label>
+            <input type="date" id="exp-date" class="form-input" required />
+            <span class="field-error" id="err-date"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="exp-category">Categoría *</label>
+          <select id="exp-category" class="form-input form-select" required>
+            <option value="">— Selecciona —</option>
+            <option value="comida">🍔 Comida</option>
+            <option value="transporte">🚌 Transporte</option>
+            <option value="ocio">🎮 Ocio</option>
+            <option value="salud">💊 Salud</option>
+            <option value="educacion">📚 Educación</option>
+            <option value="hogar">🏠 Hogar</option>
+            <option value="otros">📦 Otros</option>
+          </select>
+          <span class="field-error" id="err-category"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="exp-notes">Notas (opcional)</label>
+          <textarea id="exp-notes" class="form-input form-textarea"
+                    placeholder="Comentario adicional..." maxlength="200" rows="2"></textarea>
+        </div>
+
+        <div class="quick-cats">
+          <span class="quick-label">Acceso rápido:</span>
+          <button type="button" class="chip-quick" data-cat="comida">🍔</button>
+          <button type="button" class="chip-quick" data-cat="transporte">🚌</button>
+          <button type="button" class="chip-quick" data-cat="ocio">🎮</button>
+          <button type="button" class="chip-quick" data-cat="salud">💊</button>
+          <button type="button" class="chip-quick" data-cat="educacion">📚</button>
+          <button type="button" class="chip-quick" data-cat="hogar">🏠</button>
+          <button type="button" class="chip-quick" data-cat="otros">📦</button>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" id="btn-cancel-modal">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar gasto</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast hidden" id="toast" role="alert" aria-live="assertive"></div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
