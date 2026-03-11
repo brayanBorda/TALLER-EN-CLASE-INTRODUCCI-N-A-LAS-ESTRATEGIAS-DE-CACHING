@@ -8,26 +8,20 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="GastoSmart" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
   <link rel="stylesheet" href="./css/styles.css" />
   <title>GastoSmart</title>
 </head>
 <body>
 
-  <!-- ===== OFFLINE BANNER ===== -->
   <div id="offline-banner" class="offline-banner hidden">
-    <span>&#9889; Sin conexión — modo offline activo</span>
+    <span>Sin conexión - modo offline activo</span>
   </div>
 
-  <!-- ===== HEADER ===== -->
   <header class="app-header">
     <div class="header-left">
-      <span class="logo-icon">💸</span>
       <h1 class="app-title">GastoSmart</h1>
     </div>
     <div class="header-right">
-      <span class="header-month" id="current-month-label">Marzo 2026</span>
       <button class="btn-icon" id="btn-install" title="Instalar app" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 19h14"/>
@@ -36,7 +30,6 @@
     </div>
   </header>
 
-  <!-- ===== BOTTOM NAV ===== -->
   <nav class="bottom-nav">
     <button class="nav-item active" data-view="dashboard">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -65,11 +58,28 @@
     </button>
   </nav>
 
-  <!-- ===== MAIN CONTENT ===== -->
   <main class="main-content">
 
-    <!-- ── VIEW: DASHBOARD ── -->
     <section id="view-dashboard" class="view active">
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 class="section-title" style="margin: 0;">Dashboard</h2>
+        <select id="dashboard-month-selector" class="form-input form-select" style="width: auto; min-width: 150px;">
+          <option value="all">Todo el año</option>
+          <option value="2026-01">Enero 2026</option>
+          <option value="2026-02">Febrero 2026</option>
+          <option value="2026-03" selected>Marzo 2026</option>
+          <option value="2026-04">Abril 2026</option>
+          <option value="2026-05">Mayo 2026</option>
+          <option value="2026-06">Junio 2026</option>
+          <option value="2026-07">Julio 2026</option>
+          <option value="2026-08">Agosto 2026</option>
+          <option value="2026-09">Septiembre 2026</option>
+          <option value="2026-10">Octubre 2026</option>
+          <option value="2026-11">Noviembre 2026</option>
+          <option value="2026-12">Diciembre 2026</option>
+        </select>
+      </div>
 
       <div class="summary-cards">
         <div class="card card-income">
@@ -107,7 +117,6 @@
 
     </section>
 
-    <!-- ── VIEW: GASTOS ── -->
     <section id="view-gastos" class="view">
 
       <div class="section-header">
@@ -117,13 +126,13 @@
 
       <div class="filter-chips" id="filter-chips">
         <button class="chip active" data-filter="all">Todos</button>
-        <button class="chip" data-filter="comida">🍔 Comida</button>
-        <button class="chip" data-filter="transporte">🚌 Transporte</button>
-        <button class="chip" data-filter="ocio">🎮 Ocio</button>
-        <button class="chip" data-filter="salud">💊 Salud</button>
-        <button class="chip" data-filter="educacion">📚 Educación</button>
-        <button class="chip" data-filter="hogar">🏠 Hogar</button>
-        <button class="chip" data-filter="otros">📦 Otros</button>
+        <button class="chip" data-filter="comida">Comida</button>
+        <button class="chip" data-filter="transporte">Transporte</button>
+        <button class="chip" data-filter="ocio">Ocio</button>
+        <button class="chip" data-filter="salud">Salud</button>
+        <button class="chip" data-filter="educacion">Educación</button>
+        <button class="chip" data-filter="hogar">Hogar</button>
+        <button class="chip" data-filter="otros">Otros</button>
       </div>
 
       <ul class="expense-list" id="full-expense-list">
@@ -132,7 +141,6 @@
 
     </section>
 
-    <!-- ── VIEW: PRESUPUESTO ── -->
     <section id="view-presupuesto" class="view">
 
       <h2 class="section-title">Presupuesto Mensual</h2>
@@ -141,8 +149,9 @@
         <label class="form-label">Ingreso mensual estimado</label>
         <div class="input-group">
           <span class="input-prefix">$</span>
-          <input type="number" id="monthly-income" class="form-input" placeholder="0.00" min="0" />
+          <input type="number" id="monthly-income" class="form-input" placeholder="0" min="5000" step="5000" />
         </div>
+        <span class="field-error" id="err-income"></span>
         <button class="btn-primary mt-sm" id="btn-save-income">Guardar ingreso</button>
       </div>
 
@@ -151,13 +160,14 @@
 
         <div class="budget-cat-item card" data-cat="comida">
           <div class="budget-cat-header">
-            <span>🍔 Comida</span>
+            <span>Comida</span>
             <span class="budget-cat-spent" id="spent-comida">Gastado: $0</span>
           </div>
           <div class="input-group">
             <span class="input-prefix">$</span>
-            <input type="number" class="form-input budget-input" data-cat="comida" placeholder="Límite" min="0" />
+            <input type="number" class="form-input budget-input" data-cat="comida" placeholder="Límite" min="5000" step="5000" />
           </div>
+          <span class="field-error" id="err-budget-comida"></span>
           <div class="progress-bar-track mt-xs">
             <div class="progress-bar-fill" id="bar-comida" style="width:0%"></div>
           </div>
@@ -165,13 +175,14 @@
 
         <div class="budget-cat-item card" data-cat="transporte">
           <div class="budget-cat-header">
-            <span>🚌 Transporte</span>
+            <span>Transporte</span>
             <span class="budget-cat-spent" id="spent-transporte">Gastado: $0</span>
           </div>
           <div class="input-group">
             <span class="input-prefix">$</span>
-            <input type="number" class="form-input budget-input" data-cat="transporte" placeholder="Límite" min="0" />
+            <input type="number" class="form-input budget-input" data-cat="transporte" placeholder="Límite" min="5000" step="5000" />
           </div>
+          <span class="field-error" id="err-budget-transporte"></span>
           <div class="progress-bar-track mt-xs">
             <div class="progress-bar-fill" id="bar-transporte" style="width:0%"></div>
           </div>
@@ -179,13 +190,14 @@
 
         <div class="budget-cat-item card" data-cat="ocio">
           <div class="budget-cat-header">
-            <span>🎮 Ocio</span>
+            <span>Ocio</span>
             <span class="budget-cat-spent" id="spent-ocio">Gastado: $0</span>
           </div>
           <div class="input-group">
             <span class="input-prefix">$</span>
-            <input type="number" class="form-input budget-input" data-cat="ocio" placeholder="Límite" min="0" />
+            <input type="number" class="form-input budget-input" data-cat="ocio" placeholder="Límite" min="5000" step="5000" />
           </div>
+          <span class="field-error" id="err-budget-ocio"></span>
           <div class="progress-bar-track mt-xs">
             <div class="progress-bar-fill" id="bar-ocio" style="width:0%"></div>
           </div>
@@ -193,13 +205,14 @@
 
         <div class="budget-cat-item card" data-cat="salud">
           <div class="budget-cat-header">
-            <span>💊 Salud</span>
+            <span>Salud</span>
             <span class="budget-cat-spent" id="spent-salud">Gastado: $0</span>
           </div>
           <div class="input-group">
             <span class="input-prefix">$</span>
-            <input type="number" class="form-input budget-input" data-cat="salud" placeholder="Límite" min="0" />
+            <input type="number" class="form-input budget-input" data-cat="salud" placeholder="Límite" min="5000" step="5000" />
           </div>
+          <span class="field-error" id="err-budget-salud"></span>
           <div class="progress-bar-track mt-xs">
             <div class="progress-bar-fill" id="bar-salud" style="width:0%"></div>
           </div>
@@ -207,13 +220,14 @@
 
         <div class="budget-cat-item card" data-cat="educacion">
           <div class="budget-cat-header">
-            <span>📚 Educación</span>
+            <span>Educación</span>
             <span class="budget-cat-spent" id="spent-educacion">Gastado: $0</span>
           </div>
           <div class="input-group">
             <span class="input-prefix">$</span>
-            <input type="number" class="form-input budget-input" data-cat="educacion" placeholder="Límite" min="0" />
+            <input type="number" class="form-input budget-input" data-cat="educacion" placeholder="Límite" min="5000" step="5000" />
           </div>
+          <span class="field-error" id="err-budget-educacion"></span>
           <div class="progress-bar-track mt-xs">
             <div class="progress-bar-fill" id="bar-educacion" style="width:0%"></div>
           </div>
@@ -221,13 +235,14 @@
 
         <div class="budget-cat-item card" data-cat="hogar">
           <div class="budget-cat-header">
-            <span>🏠 Hogar</span>
+            <span>Hogar</span>
             <span class="budget-cat-spent" id="spent-hogar">Gastado: $0</span>
           </div>
           <div class="input-group">
             <span class="input-prefix">$</span>
-            <input type="number" class="form-input budget-input" data-cat="hogar" placeholder="Límite" min="0" />
+            <input type="number" class="form-input budget-input" data-cat="hogar" placeholder="Límite" min="5000" step="5000" />
           </div>
+          <span class="field-error" id="err-budget-hogar"></span>
           <div class="progress-bar-track mt-xs">
             <div class="progress-bar-fill" id="bar-hogar" style="width:0%"></div>
           </div>
@@ -235,13 +250,14 @@
 
         <div class="budget-cat-item card" data-cat="otros">
           <div class="budget-cat-header">
-            <span>📦 Otros</span>
+            <span>Otros</span>
             <span class="budget-cat-spent" id="spent-otros">Gastado: $0</span>
           </div>
           <div class="input-group">
             <span class="input-prefix">$</span>
-            <input type="number" class="form-input budget-input" data-cat="otros" placeholder="Límite" min="0" />
+            <input type="number" class="form-input budget-input" data-cat="otros" placeholder="Límite" min="5000" step="5000" />
           </div>
+          <span class="field-error" id="err-budget-otros"></span>
           <div class="progress-bar-track mt-xs">
             <div class="progress-bar-fill" id="bar-otros" style="width:0%"></div>
           </div>
@@ -253,9 +269,25 @@
 
     </section>
 
-    <!-- ── VIEW: GRÁFICOS ── -->
     <section id="view-graficos" class="view">
-      <h2 class="section-title">Resumen &amp; Gráficos</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 class="section-title" style="margin: 0;">Resumen &amp; Gráficos</h2>
+        <select id="graph-month-selector" class="form-input form-select" style="width: auto; min-width: 150px;">
+          <option value="all">Todo el año</option>
+          <option value="2026-01">Enero 2026</option>
+          <option value="2026-02">Febrero 2026</option>
+          <option value="2026-03" selected>Marzo 2026</option>
+          <option value="2026-04">Abril 2026</option>
+          <option value="2026-05">Mayo 2026</option>
+          <option value="2026-06">Junio 2026</option>
+          <option value="2026-07">Julio 2026</option>
+          <option value="2026-08">Agosto 2026</option>
+          <option value="2026-09">Septiembre 2026</option>
+          <option value="2026-10">Octubre 2026</option>
+          <option value="2026-11">Noviembre 2026</option>
+          <option value="2026-12">Diciembre 2026</option>
+        </select>
+      </div>
 
       <div class="tabs" id="chart-tabs">
         <button class="tab active" data-tab="bar">Presupuesto vs Real</button>
@@ -279,7 +311,7 @@
 
       <div class="chart-panel" id="tab-monthly">
         <div class="monthly-summary card">
-          <h3>Resumen de Marzo 2026</h3>
+          <h3 id="monthly-summary-title">Resumen mensual</h3>
           <ul class="summary-list" id="monthly-summary-list">
             <li class="empty-state">Sin datos para este mes</li>
           </ul>
@@ -290,7 +322,6 @@
 
   </main>
 
-  <!-- ===== MODAL: AGREGAR GASTO ===== -->
   <div class="modal-overlay hidden" id="modal-overlay">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div class="modal-header">
@@ -317,7 +348,7 @@
             <div class="input-group">
               <span class="input-prefix">$</span>
               <input type="number" id="exp-amount" class="form-input"
-                     placeholder="0.00" min="0.01" step="0.01" required />
+                     placeholder="0" min="1000" step="100" required />
             </div>
             <span class="field-error" id="err-amount"></span>
           </div>
@@ -332,13 +363,13 @@
           <label class="form-label" for="exp-category">Categoría *</label>
           <select id="exp-category" class="form-input form-select" required>
             <option value="">— Selecciona —</option>
-            <option value="comida">🍔 Comida</option>
-            <option value="transporte">🚌 Transporte</option>
-            <option value="ocio">🎮 Ocio</option>
-            <option value="salud">💊 Salud</option>
-            <option value="educacion">📚 Educación</option>
-            <option value="hogar">🏠 Hogar</option>
-            <option value="otros">📦 Otros</option>
+            <option value="comida">Comida</option>
+            <option value="transporte">Transporte</option>
+            <option value="ocio">Ocio</option>
+            <option value="salud">Salud</option>
+            <option value="educacion">Educación</option>
+            <option value="hogar">Hogar</option>
+            <option value="otros">Otros</option>
           </select>
           <span class="field-error" id="err-category"></span>
         </div>
@@ -347,17 +378,6 @@
           <label class="form-label" for="exp-notes">Notas (opcional)</label>
           <textarea id="exp-notes" class="form-input form-textarea"
                     placeholder="Comentario adicional..." maxlength="200" rows="2"></textarea>
-        </div>
-
-        <div class="quick-cats">
-          <span class="quick-label">Acceso rápido:</span>
-          <button type="button" class="chip-quick" data-cat="comida">🍔</button>
-          <button type="button" class="chip-quick" data-cat="transporte">🚌</button>
-          <button type="button" class="chip-quick" data-cat="ocio">🎮</button>
-          <button type="button" class="chip-quick" data-cat="salud">💊</button>
-          <button type="button" class="chip-quick" data-cat="educacion">📚</button>
-          <button type="button" class="chip-quick" data-cat="hogar">🏠</button>
-          <button type="button" class="chip-quick" data-cat="otros">📦</button>
         </div>
 
         <div class="modal-actions">
@@ -369,11 +389,13 @@
     </div>
   </div>
 
-  <!-- ===== TOAST ===== -->
   <div class="toast hidden" id="toast" role="alert" aria-live="assertive"></div>
 
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="./js/categorias.js"></script>
+  <script src="./js/storage.js"></script>
+  <script src="./js/gastos.js"></script>
+  <script src="./js/graficos.js"></script>
   <script src="./js/app.js"></script>
 </body>
 </html>

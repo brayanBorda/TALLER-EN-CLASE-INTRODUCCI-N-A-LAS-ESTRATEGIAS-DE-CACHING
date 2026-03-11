@@ -701,6 +701,7 @@ body {
 
 .toast.success { border-color: var(--clr-success); color: var(--clr-success); }
 .toast.error   { border-color: var(--clr-danger);  color: var(--clr-danger);  }
+.toast.warning { border-color: var(--clr-warning); color: var(--clr-warning); }
 
 /* ── CATEGORY BADGE COLORS ── */
 .badge-comida     { background: var(--cat-comida); }
