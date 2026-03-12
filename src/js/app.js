@@ -4,7 +4,7 @@ if ("serviceWorker" in navigator) { // Solo registro el SW
   );
 }
 
-function formatMonto(n) { 
+function formatMonto(n) {
   return "$" + (n || 0).toLocaleString("es-CO", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2
@@ -49,9 +49,9 @@ btnTexts.forEach(btn =>
 function renderDashboard() {
   const mesSeleccionado = document.getElementById("dashboard-month-selector").value;
   console.log("Mes seleccionado:", mesSeleccionado); // Debug temporal
-  
+
   let gastosFiltrados, presupuestoTotal;
-  
+
   if (mesSeleccionado === "all") {
     gastosFiltrados = gastos;
     presupuestoTotal = ingresoMensual * 12; // Se toma en cuenta todo el año, por eso se multiplica por 12
@@ -59,9 +59,9 @@ function renderDashboard() {
     gastosFiltrados = gastos.filter(g => g.fecha.startsWith(mesSeleccionado));
     presupuestoTotal = ingresoMensual;
   }
-  
+
   console.log("Total gastos:", gastos.length, "Filtrados:", gastosFiltrados.length); // Debug temporal
-  
+
   const totalGastos = gastosFiltrados.reduce((s, g) => s + g.monto, 0);
   const balance = presupuestoTotal - totalGastos;
 
@@ -130,17 +130,17 @@ document.getElementById("btn-save-income").addEventListener("click", () => {
 
 document.getElementById("btn-save-budgets").addEventListener("click", () => {
   let hayError = false;
-  
+
   CATEGORIAS.forEach(cat => {
     const errEl = document.getElementById("err-budget-" + cat);
     errEl.textContent = "";
   });
-  
+
   document.querySelectorAll(".budget-input").forEach(input => {
     const cat = input.dataset.cat;
     const val = parseFloat(input.value);
     const errEl = document.getElementById("err-budget-" + cat);
-    
+
     if (input.value && (isNaN(val) || val < 5000)) {
       errEl.textContent = "Mínimo $5.000.";
       hayError = true;
@@ -150,12 +150,12 @@ document.getElementById("btn-save-budgets").addEventListener("click", () => {
       presupuestos[cat] = 0;
     }
   });
-  
+
   if (hayError) {
     mostrarToast("Corrige los errores en los presupuestos", "error");
     return;
   }
-  
+
   guardarDatos();
   mostrarToast("Presupuestos guardados correctamente", "success");
   renderDashboard();
@@ -170,24 +170,14 @@ window.addEventListener("online", actualizarBanner);
 window.addEventListener("offline", actualizarBanner);
 actualizarBanner();
 
-let deferredPrompt = null;
-const btnInstall = document.getElementById("btn-install");
-
-window.addEventListener("beforeinstallprompt", e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  btnInstall.hidden = false;
+// El botón del header descarga el reporte PDF del mes activo en gráficos
+document.getElementById("btn-download-pdf").addEventListener("click", () => {
+  descargarPDF();
 });
 
-btnInstall.addEventListener("click", async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === "accepted") btnInstall.hidden = true;
-  deferredPrompt = null;
-});
-
-document.getElementById("dashboard-month-selector").addEventListener("change", () => {
+document.getElementById("dashboard-month-selector").addEventListener("change", (e) => {
+  // Sincronizamos el selector de gráficos para que el PDF use el mismo mes
+  document.getElementById("graph-month-selector").value = e.target.value;
   renderDashboard();
 });
 
