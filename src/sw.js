@@ -18,11 +18,12 @@ const STATIC_FILES = [
 ];
 
 const IMMUTABLE_FILES = [
-    'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'
+    'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
 ];
 
 
-//1. EVENTO INSTALL: Precachea App Shell y recursos inmutables
+//EVENTO INSTALL: Precachea App Shell y recursos inmutables
 self.addEventListener('install', (event) => {
     console.log('[SW] Instalando Service Worker - Precacheando App Shell');
     
@@ -46,7 +47,8 @@ self.addEventListener('install', (event) => {
     self.skipWaiting(); // Activa el SW inmediatamente
 });
 
-   //2. EVENTO ACTIVATE: Limpia cachés viejos
+   //EVENTO ACTIVATE: Limpia cachés viejos
+   // aaaaaaaaaaaaa
 
 self.addEventListener('activate', (event) => {
     console.log('[SW] Activando Service Worker - Limpiando cachés antiguos');
@@ -89,6 +91,7 @@ function limpiarCache(cacheName, maxItems) {
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
     
+    /*
     // ── ESTRATEGIA 1: CACHE ONLY
     if (STATIC_FILES.some(f => event.request.url.includes(f.replace('./', '')))) {
         event.respondWith(
@@ -106,6 +109,7 @@ self.addEventListener('fetch', (event) => {
                 })
         );
     }
+    */
     
     /*
     // ── ESTRATEGIA 2: CACHE WITH NETWORK FALLBACK
@@ -139,6 +143,47 @@ self.addEventListener('fetch', (event) => {
     
     */
     
+    // ── ESTRATEGIA 2: CACHE WITH NETWORK FALLBACK (ACTIVA)
+    // Busca en caché primero, si no está → intenta la red
+    event.respondWith(
+        caches.match(event.request)
+            .then(response => {
+                if (response) {
+                    console.log('[SW] CACHE WITH NETWORK FALLBACK (cache hit):', event.request.url);
+                    return response;
+                }
+                console.log('[SW] CACHE WITH NETWORK FALLBACK (fetching from network):', event.request.url);
+                
+                return fetch(event.request)
+                    .then(newResp => {
+                        if (!newResp || newResp.status !== 200) return newResp;
+                        
+                        // Guarda en caché
+                        let cacheName = event.request.url.includes('cdn.jsdelivr.net') 
+                            ? CACHE_IMMUTABLE_NAME 
+                            : CACHE_DYNAMIC_NAME;
+                        
+                        caches.open(cacheName)
+                            .then(cache => {
+                                cache.put(event.request, newResp.clone());
+                                if (cacheName === CACHE_DYNAMIC_NAME) {
+                                    limpiarCache(CACHE_DYNAMIC_NAME, MAX_CACHE_ITEMS);
+                                }
+                            });
+                        
+                        return newResp;
+                    })
+                    .catch(err => {
+                        console.log('[SW] CACHE WITH NETWORK FALLBACK (red error, usando caché):', event.request.url);
+                        return caches.match(event.request)
+                            .then(response => response || new Response('Offline - Recurso no disponible', {
+                                status: 503,
+                                statusText: 'Service Unavailable'
+                            }));
+                    });
+            })
+    );
+    
     /*
     // ── ESTRATEGIA 3: NETWORK WITH CACHE FALLBACK
     // Para datos dinámicos: busca red primero, luego caché
@@ -171,5 +216,6 @@ self.addEventListener('fetch', (event) => {
                         }));
                 })
         );
-    } */
+    }
+    */
 });
