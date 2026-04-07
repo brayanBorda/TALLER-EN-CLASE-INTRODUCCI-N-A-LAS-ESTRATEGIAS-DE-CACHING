@@ -1,0 +1,11 @@
+Repositorio público de GitHub para el Taller- Introducción a las estrategias de Caching
+
+GastoSmart
+
+- https://github.com/brayanBorda/TALLER-EN-CLASE-INTRODUCCI-N-A-LAS-ESTRATEGIAS-DE-CACHING.git
+
+Integrantes: 
+
+Brayan Borda
+Karina Alfonso
+Cristian Basto

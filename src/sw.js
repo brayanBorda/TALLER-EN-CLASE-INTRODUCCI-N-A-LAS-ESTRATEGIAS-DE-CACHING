@@ -1,4 +1,4 @@
-const mi_cache = "gastosmart-v1"; // GastoSmart es nombre de IA bien descarado pero me gusta el nombre
+const mi_cache = "gastosmart-v1"; // GastoSmart
 
 const files = [
     "./",
